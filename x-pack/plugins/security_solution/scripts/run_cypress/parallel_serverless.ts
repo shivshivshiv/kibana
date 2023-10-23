@@ -463,6 +463,20 @@ ${JSON.stringify(cypressConfigFile, null, 2)}
               await cypress.open({
                 configFile: cypressConfigFilePath,
                 config: {
+                  reporter: '../../../node_modules/@reportportal/agent-js-cypress',
+                  reporterOptions: {
+                    endpoint: 'https://35.226.254.46/api/v1',
+                    apiKey: process.env.RP_API_KEY,
+                    // launch: 'security_solution_QA_cypress',
+                    project: 'test-development',
+                    // description: 'The security solution cypress tests for QA quality gate',
+                    launchId: process.env.LAUNCH_ID,
+                    launchUuidPrint: true,
+                    skippedIssue: false,
+                    autoMerge: true,
+                    parallel: true,
+                    // attributes: [],
+                  },
                   e2e: {
                     baseUrl: environment.kb_url,
                   },
@@ -479,6 +493,20 @@ ${JSON.stringify(cypressConfigFile, null, 2)}
                   reporterOptions: argv.reporterOptions,
                   headed: argv.headed as boolean,
                   config: {
+                    reporter: '../../../node_modules/@reportportal/agent-js-cypress',
+                    reporterOptions: {
+                      endpoint: 'https://35.226.254.46/api/v1',
+                      apiKey: process.env.RP_API_KEY,
+                      // launch: 'security_solution_QA_cypress',
+                      project: 'test-development',
+                      // description: 'The security solution cypress tests for QA quality gate',
+                      launchId: process.env.LAUNCH_ID,
+                      launchUuidPrint: true,
+                      skippedIssue: false,
+                      autoMerge: true,
+                      parallel: true,
+                      // attributes: [],
+                    },
                     e2e: {
                       baseUrl: environment.kb_url,
                     },
