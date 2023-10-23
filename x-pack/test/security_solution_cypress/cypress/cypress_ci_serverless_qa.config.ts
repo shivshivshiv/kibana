@@ -7,12 +7,23 @@
 
 import { defineCypressConfig } from '@kbn/cypress-config';
 import { esArchiver } from './support/es_archiver';
+const registerReportPortalPlugin = require('@reportportal/agent-js-cypress/lib/plugin');
 
 // eslint-disable-next-line import/no-default-export
 export default defineCypressConfig({
-  reporter: '../../../node_modules/cypress-multi-reporters',
+  reporter: '../../../node_modules/@reportportal/agent-js-cypress',
   reporterOptions: {
-    configFile: './cypress/reporter_config.json',
+    endpoint: 'https://35.226.254.46/api/v1',
+    apiKey: process.env.RP_API_KEY,
+    launch: 'security_solution_QA_cypress',
+    project: 'test-development',
+    description: 'The security solution cypress tests for QA quality gate',
+    launchId: process.env.LAUNCH_ID,
+    launchUuidPrint: true,
+    skippedIssue: false,
+    autoMerge: true,
+    parallel: true,
+    attributes: [],
   },
   defaultCommandTimeout: 150000,
   env: {
@@ -39,6 +50,7 @@ export default defineCypressConfig({
     specPattern: './cypress/e2e/**/*.cy.ts',
     setupNodeEvents(on, config) {
       esArchiver(on, config);
+      registerReportPortalPlugin(on, config);
       // eslint-disable-next-line @typescript-eslint/no-var-requires
       require('@cypress/grep/src/plugin')(config);
       return config;
