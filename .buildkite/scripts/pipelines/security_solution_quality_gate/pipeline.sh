@@ -19,34 +19,52 @@ QA_API_KEY=$(retry 5 5 vault read -field=qa_api_key secret/kibana-issues/dev/sec
 VAULT_DEC_KEY=$(retry 5 5 vault read -field=enc_key secret/kibana-issues/dev/security-solution-qg-enc-key)
 RP_API_KEY=$(echo $RP_API_KEY_ENC | openssl aes-256-cbc -d -a -pass pass:$VAULT_DEC_KEY)
 
-LAUNCH_ID=$(curl -k --location 'https://35.226.254.46/api/v1/test-development/launch' \
-    --header 'Content-Type: application/json' \
-    --header "Authorization: Bearer $RP_API_KEY" \
-    --data '{
+EXECUTION_MODE_CI=${CI:-}
+if [ $EXECUTION_MODE_CI == "true" ];
+then
+    EXECUTION_MODE="CI"
+else
+    EXECUTION_MODE="Local"
+fi
+
+DATE_BEFORE=$(date -u "+%Y-%m-%dT%H:%M:%S+00:00")
+REQUEST_BODY='{
         "name": "security_solution_QA_cypress",
-        "description": "The security solution cypress tests for QA quality gate",
-        "startTime": "'$(date -u "+%Y-%m-%dT%H:%M:%S+00:00")'",
+        "description": "The security solution cypress tests for QA quality gate\n'$BUILDKITE_BUILD_URL'",
+        "startTime": "'$DATE_BEFORE'",
         "mode": "DEFAULT",
         "attributes": [
             {
-                "key": "build",
-                "value": "0.1"
+                "value": "QA"
             },
-            {
-                "value": "test"
+            {   
+                "key": "Creator",
+                "value": "'$BUILDKITE_BUILD_CREATOR'"
+            },
+            {   
+                "key": "Branch",
+                "value": "'$BUILDKITE_BRANCH'"
+            },
+            {   
+                "key": "Execution",
+                "value": "'$EXECUTION_MODE'"
             }
         ]
-    }' | jq -r '.id')
+    }'
+
+LAUNCH_ID=$(curl -k --location "https://35.226.254.46/api/v1/test-development/launch" \
+    --header "Content-Type: application/json" \
+    --header "Authorization: Bearer $RP_API_KEY" \
+    --data "$REQUEST_BODY" | jq -r '.id')
 
 echo "Reportportal launch ID was created: $LAUNCH_ID"
 
-LAUNCH_ID=$LAUNCH_ID RP_API_KEY=$RP_API_KEY PARALLEL_COUNT=4 CLOUD_QA_API_KEY=$QA_API_KEY yarn cypress:run:qa:serverless:parallel
+LAUNCH_ID=$LAUNCH_ID RP_API_KEY=$RP_API_KEY PARALLEL_COUNT=2 CLOUD_QA_API_KEY=$QA_API_KEY yarn cypress:run:qa:serverless:parallel
 # LAUNCH_ID=$LAUNCH_ID RP_API_KEY=$RP_API_KEY PARALLEL_COUNT=4 CLOUD_QA_API_KEY=$QA_API_KEY yarn cypress:run:qa:serverless:parallel; status=$?; yarn junit:merge || :; exit $status
 
 curl -k --location --request PUT "https://35.226.254.46/api/v1/test-development/launch/$LAUNCH_ID/finish" \
-    --header 'Content-Type: application/json' \
+    --header "Content-Type: application/json" \
     --header "Authorization: Bearer $RP_API_KEY" \
     --data '{
         "endTime": "'$(date -u "+%Y-%m-%dT%H:%M:%S+00:00")'"
     }'
-

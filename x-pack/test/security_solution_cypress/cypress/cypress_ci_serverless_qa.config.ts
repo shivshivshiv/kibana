@@ -11,26 +11,15 @@ const registerReportPortalPlugin = require('@reportportal/agent-js-cypress/lib/p
 
 // eslint-disable-next-line import/no-default-export
 export default defineCypressConfig({
-  // reporter: '../../../node_modules/@reportportal/agent-js-cypress',
-  // reporterOptions: {
-  //   endpoint: 'https://35.226.254.46/api/v1',
-  //   apiKey: process.env.RP_API_KEY,
-  //   launch: 'security_solution_QA_cypress',
-  //   project: 'test-development',
-  //   description: 'The security solution cypress tests for QA quality gate',
-  //   launchId: process.env.LAUNCH_ID,
-  //   launchUuidPrint: true,
-  //   skippedIssue: false,
-  //   autoMerge: true,
-  //   parallel: true,
-  //   attributes: [],
-  // },
+  reporter: '../../../node_modules/cypress-multi-reporters',
+  reporterOptions: {
+    configFile: './cypress/reporter_config.json',
+  },
   defaultCommandTimeout: 150000,
   env: {
     grepFilterSpecs: true,
     grepOmitFiltered: true,
-    grepTags: '@testHere --@brokenInServerless --@skipInServerless',
-    // grepTags: '@testHere @serverless --@brokenInServerless --@skipInServerless',
+    grepTags: '@serverlessQA --@brokenInServerless --@skipInServerless',
   },
   execTimeout: 150000,
   pageLoadTimeout: 150000,

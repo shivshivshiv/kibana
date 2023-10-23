@@ -25,7 +25,7 @@ import {
   UNSELECTED_ALERT_TAG,
 } from '../../../screens/alerts';
 
-describe('Alert tagging', { tags: ['@ess', '@serverless', '@testHere'] }, () => {
+describe('Alert tagging', { tags: ['@ess', '@serverless'] }, () => {
   before(() => {
     cleanKibana();
     cy.task('esArchiverResetKibana');

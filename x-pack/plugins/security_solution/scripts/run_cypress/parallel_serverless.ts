@@ -408,6 +408,7 @@ ${JSON.stringify(cypressConfigFile, null, 2)}
               log.error(msg);
               abortCtrl.abort();
             };
+            log.info(`Picked file with name : ${filePath}`);
             const id = crypto.randomBytes(8).toString('hex');
             const PROJECT_NAME = `${PROJECT_NAME_PREFIX}-${id}`;
             const specFileFTRConfig = parseTestFileConfig(filePath);
@@ -531,6 +532,7 @@ ${JSON.stringify(cypressConfigFile, null, 2)}
 
             return result;
           });
+          log.info(`Finished with file : ${filePath}`);
           return result;
         },
         {
@@ -547,6 +549,7 @@ ${JSON.stringify(cypressConfigFile, null, 2)}
         if (hasFailedTests) {
           throw createFailError('Not all tests passed');
         }
+        log.info(`Finished execution`);
       });
     },
     {
