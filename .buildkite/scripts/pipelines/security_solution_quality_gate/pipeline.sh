@@ -62,6 +62,8 @@ echo "Reportportal launch ID was created: $LAUNCH_ID"
 LAUNCH_ID=$LAUNCH_ID RP_API_KEY=$RP_API_KEY PARALLEL_COUNT=2 CLOUD_QA_API_KEY=$QA_API_KEY yarn cypress:run:qa:serverless:parallel
 # LAUNCH_ID=$LAUNCH_ID RP_API_KEY=$RP_API_KEY PARALLEL_COUNT=4 CLOUD_QA_API_KEY=$QA_API_KEY yarn cypress:run:qa:serverless:parallel; status=$?; yarn junit:merge || :; exit $status
 
+echo "Finished test execution"
+
 curl -k --location --request PUT "https://35.226.254.46/api/v1/test-development/launch/$LAUNCH_ID/finish" \
     --header "Content-Type: application/json" \
     --header "Authorization: Bearer $RP_API_KEY" \
