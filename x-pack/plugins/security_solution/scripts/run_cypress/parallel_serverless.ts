@@ -374,6 +374,7 @@ ${JSON.stringify(cypressConfigFile, null, 2)}
       let files = retrieveIntegrations(concreteFilePaths);
 
       log.info('Resolved spec files after retrieveIntegrations:', files);
+      log.info('Resolved spec files number after retrieveIntegrations:', files.length);
 
       if (argv.changedSpecsOnly) {
         files = (findChangedFiles('main', false) as string[]).reduce((acc, itemPath) => {
@@ -421,6 +422,7 @@ ${JSON.stringify(cypressConfigFile, null, 2)}
               specFileFTRConfig,
               onEarlyExit
             );
+            log.info(`Environment ${environment.name} was created!`);
 
             // Reset credentials for elastic user
             const credentials = await resetCredentials(BASE_ENV_URL, environment.id, id, API_KEY);
@@ -500,6 +502,7 @@ ${JSON.stringify(cypressConfigFile, null, 2)}
               API_KEY,
               onEarlyExit
             );
+            log.info(`Environment ${environment.name} was deleted!`);
 
             return result;
           });
